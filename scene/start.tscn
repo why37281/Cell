@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://bx6ecrnwbfupc"]
+
+[ext_resource type="Script" uid="uid://bgab32fp68bj8" path="res://script/start.gd" id="1_pyxt3"]
+
+[node name="Start" type="Control" unique_id=802833649]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_pyxt3")
+
+[node name="Label" type="Label" parent="." unique_id=936823172]
+layout_mode = 0
+offset_left = 436.0
+offset_top = 42.0
+offset_right = 630.0
+offset_bottom = 193.0
+theme_override_font_sizes/font_size = 110
+text = "Cell"
+
+[node name="Exit" type="Button" parent="." unique_id=1719531004]
+layout_mode = 0
+offset_left = 388.0
+offset_top = 351.0
+offset_right = 753.0
+offset_bottom = 404.0
+text = "退出"
+
+[node name="Start" type="Button" parent="." unique_id=1804158091]
+layout_mode = 0
+offset_left = 383.0
+offset_top = 207.0
+offset_right = 753.0
+offset_bottom = 252.0
+text = "开始"
+
+[node name="Settings" type="Button" parent="." unique_id=1223283336]
+layout_mode = 0
+offset_left = 388.0
+offset_top = 288.0
+offset_right = 758.0
+offset_bottom = 319.0
+text = "设置"
+
+[connection signal="pressed" from="Exit" to="." method="_on_exit_pressed"]
+[connection signal="pressed" from="Start" to="." method="_on_start_pressed"]
+[connection signal="pressed" from="Settings" to="." method="_on_settings_pressed"]
