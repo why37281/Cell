@@ -1,7 +1,25 @@
 [gd_scene format=3 uid="uid://bxvduf8h0611e"]
 
+[ext_resource type="Texture2D" uid="uid://dpfrvvp0v0wen" path="res://resource/picture/tile/board.png" id="1_5kiuu"]
+[ext_resource type="Script" uid="uid://bvk6tcbv3ydqq" path="res://script/game.gd" id="1_dbls1"]
+[ext_resource type="Script" uid="uid://cy7utfm5wq5gu" path="res://script/camera.gd" id="2_33cqm"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5kiuu"]
+texture = ExtResource("1_5kiuu")
+texture_region_size = Vector2i(64, 64)
+0:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_n4st5"]
+tile_size = Vector2i(64, 64)
+sources/1 = SubResource("TileSetAtlasSource_5kiuu")
+
 [node name="Game" type="Node2D" unique_id=1829907624]
+script = ExtResource("1_dbls1")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1124293876]
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1984213129]
+script = ExtResource("2_33cqm")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=505524648]
+tile_set = SubResource("TileSet_n4st5")
