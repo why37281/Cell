@@ -1,37 +1,95 @@
 [gd_scene format=3 uid="uid://deoti8wsr7rlh"]
 
-[sub_resource type="GDScriptSyntaxHighlighter" id="GDScriptSyntaxHighlighter_xwum5"]
+[ext_resource type="Script" uid="uid://bey2x6ll3lp3j" path="res://console/console_window.gd" id="1_uqdcy"]
 
 [node name="ConsoleWindow" type="Window" unique_id=887806304]
 oversampling_override = 1.0
+title = "Console"
 initial_position = 1
+size = Vector2i(800, 500)
+script = ExtResource("1_uqdcy")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=274435643]
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="VSplitContainer" type="VSplitContainer" parent="." unique_id=1823987566]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+split_offsets = PackedInt32Array(50)
+split_offset = 50
 
-[node name="ScrollContainer" type="ScrollContainer" parent="VBoxContainer" unique_id=779934691]
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer" unique_id=274435643]
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ScrollContainer" type="ScrollContainer" parent="VSplitContainer/VBoxContainer" unique_id=779934691]
+layout_mode = 2
+size_flags_vertical = 3
 horizontal_scroll_mode = 3
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer/ScrollContainer" unique_id=514592618]
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer/VBoxContainer/ScrollContainer" unique_id=514592618]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RichTextLabel" type="RichTextLabel" parent="VSplitContainer/VBoxContainer/ScrollContainer/MarginContainer" unique_id=1575991822]
+layout_mode = 2
+focus_mode = 2
+theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/bold_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 20
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/mono_font_size = 20
+bbcode_enabled = true
+scroll_following = true
+selection_enabled = true
+
+[node name="MarginContainer" type="MarginContainer" parent="VSplitContainer" unique_id=744825951]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="PanelContainer" type="PanelContainer" parent="VSplitContainer/MarginContainer" unique_id=670918695]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="VSplitContainer/MarginContainer/PanelContainer" unique_id=1176962169]
 layout_mode = 2
 
-[node name="RichTextLabel" type="RichTextLabel" parent="VBoxContainer/ScrollContainer/MarginContainer" unique_id=1575991822]
+[node name="TextEdit" type="TextEdit" parent="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer" unique_id=1049562337]
 layout_mode = 2
-
-[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer" unique_id=670918695]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="VBoxContainer/PanelContainer" unique_id=1176962169]
-layout_mode = 2
-
-[node name="TextEdit" type="TextEdit" parent="VBoxContainer/PanelContainer/VBoxContainer" unique_id=1049562337]
-layout_mode = 2
+size_flags_vertical = 3
 virtual_keyboard_enabled = false
 scroll_smooth = true
 scroll_past_end_of_file = true
 caret_multiple = false
 use_default_word_separators = false
-syntax_highlighter = SubResource("GDScriptSyntaxHighlighter_xwum5")
-highlight_current_line = true
+
+[node name="HBoxContainer" type="HBoxContainer" parent="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer" unique_id=710220804]
+layout_mode = 2
+
+[node name="Run" type="Button" parent="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1249561515]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "运行"
+
+[node name="Export" type="Button" parent="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1533051930]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "导出"
+
+[connection signal="close_requested" from="." to="." method="_on_close_requested"]
+[connection signal="focus_entered" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_entered"]
+[connection signal="focus_exited" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_exited"]
+[connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Run" to="." method="_on_run_pressed"]
+[connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Export" to="." method="_on_export_pressed"]
