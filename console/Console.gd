@@ -2,8 +2,107 @@ extends Node
 
 var vars: Dictionary = {}          # 所有持久化变量存在这里
 var execute_node: Node = null      # 一直存活的执行节点
-var log_entries : Array[String] = []
 var console_window : Window
+
+# 日志自动导出相关常量
+const AUTO_EXPORT_LINES_THRESHOLD = 1000
+const AUTO_EXPORT_CHUNK = 500
+const LOG_FILE_NAME = "console_log.txt"
+
+# 修改日志存储为字典数组：{ "type": "error"/"warn"/"info", "text": "消息内容" }
+var log_entries: Array[Dictionary] = []
+var total_chars: int = 0  # 可保留用于其他限制，非必须
+
+func _check_auto_export() -> void:
+	if log_entries.size() >= AUTO_EXPORT_LINES_THRESHOLD:
+		_auto_export()
+
+func _auto_export() -> void:
+	# 取前 AUTO_EXPORT_CHUNK 条日志
+	var to_export = log_entries.slice(0, AUTO_EXPORT_CHUNK)
+	# 写入文件（追加模式）
+	_append_to_file_readable(to_export)
+	# 从内存中移除已导出的条目
+	log_entries = log_entries.slice(AUTO_EXPORT_CHUNK, log_entries.size())
+	# 重建显示，只保留剩余的500行
+	#_rebuild_display()
+	# 在编辑器控制台打一条记录，避免循环
+	print("[Console] 已自动导出 %d 行日志" % AUTO_EXPORT_CHUNK)
+
+# 将日志导出到指定文件（追加模式）
+func export_logs_to_file(file_name: String) -> void:
+	if log_entries.is_empty():
+		print_info("没有可导出的日志。")
+		return
+
+	var dir = Path.exe_dir
+	var file_path = dir.path_join(file_name)
+
+	# 确保目录存在
+	DirAccess.make_dir_recursive_absolute(dir)
+
+	var file = FileAccess.open(file_path, FileAccess.READ_WRITE)
+	if file == null:
+		# 文件不存在则创建
+		file = FileAccess.open(file_path, FileAccess.WRITE)
+		if file == null:
+			push_error("无法创建日志文件: " + file_path)
+			return
+
+	file.seek_end()  # 移动到文件末尾，准备追加
+
+	for entry in log_entries:
+		var line: String
+		match entry["type"]:
+			"error": line = "● ERROR: " + entry["text"]
+			"warn":   line = "● WARN: " + entry["text"]
+			_:        line = entry["text"]
+		file.store_string(line + "\n")
+
+	file.close()
+	print_info("日志已导出到 " + file_name)
+
+func _append_to_file_readable(entries: Array) -> void:
+	var dir = Path.exe_dir
+	var file_path = dir.path_join(LOG_FILE_NAME)
+
+	# 确保目录存在
+	DirAccess.make_dir_recursive_absolute(dir)
+
+	var file = FileAccess.open(file_path, FileAccess.READ_WRITE)
+	if file == null:
+		file = FileAccess.open(file_path, FileAccess.WRITE)
+		if file == null:
+			push_error("无法创建日志文件: " + file_path)
+			return
+	file.seek_end()
+
+	for entry in entries:
+		var line: String
+		match entry["type"]:
+			"error": line = "● ERROR: " + entry["text"]
+			"warn":   line = "● WARN: " + entry["text"]
+			_:        line = entry["text"]
+		file.store_string(line + "\n")
+
+	file.close()
+
+func _rebuild_display() -> void:
+	var rtl = console_window.rich_text
+	rtl.clear()
+	for entry in log_entries:
+		var safe_text = entry["text"].replace("[", "[lb]").replace("]", "[rb]")
+		match entry["type"]:
+			"error":
+				rtl.append_text("[color=red][b]● ERROR: [/b]" + safe_text + "[/color]\n")
+			"warn":
+				rtl.append_text("[color=yellow][b]● WARN: [/b]" + safe_text + "[/color]\n")
+			_:  # info
+				rtl.append_text("[color=white]" + safe_text + "[/color]\n")
+
+func _add_log_line(type: String, text: String) -> void:
+	log_entries.append({"type": type, "text": text})
+	_check_auto_export()
 
 class ConsoleLogger extends Logger:
 	func _log_error(function: String, file: String, line: int, code: Variant, rationale: String, editor_notify: bool, error_type: int, script_backtraces: Array) -> void:
@@ -115,15 +214,21 @@ func run():
 	DirAccess.remove_absolute(file_path)
 	print_info("Done.")
 
-func print_error(error:String):
-	print("pushed error")
-	console_window.rich_text.append_text("[color=red][b] ● ERROR : [/b]" + error + "[/color]\n")
+func print_info(info: String):
+	_add_log_line("info", info)
+	# 将 info 中的 [ ] 转义为 [lb] 和 [rb]
+	var safe_info = info.replace("[", "[lb]").replace("]", "[rb]")
+	console_window.rich_text.append_text(safe_info + "\n")
 
-func print_info(info:String):
-	console_window.rich_text.append_text("[color=gray]" + info + "[/color]\n")
+func print_error(error: String):
+	_add_log_line("error", error)
+	var safe_error = error.replace("[", "[lb]").replace("]", "[rb]")
+	console_window.rich_text.append_text("[color=red][b]● ERROR: [/b]" + safe_error + "[/color]\n")
 
-func print_warn(warn:String):
-	console_window.rich_text.append_text("[color=yellow][b] ● WARN : [/b]" + warn + "[/color]\n")
+func print_warn(warn: String):
+	_add_log_line("warn", warn)
+	var safe_warn = warn.replace("[", "[lb]").replace("]", "[rb]")
+	console_window.rich_text.append_text("[color=yellow][b]● WARN: [/b]" + safe_warn + "[/color]\n")
 
 func _input(event):
 	# 只处理按键按下事件
