@@ -5,37 +5,46 @@ var execute_node: Node = null      # 一直存活的执行节点
 var log_entries : Array[String] = []
 var console_window : Window
 
-# 1. 定义一个内部类，继承 Logger
 class ConsoleLogger extends Logger:
-	# 重写 _log_error 方法来处理错误、警告和脚本错误
-	func _log_error(function: String, file: String, line: int, code: String, rationale: String, editor_notify: bool, error_type: int, script_backtraces: Array) -> void:
-		print("[DEBUG _log_error] type:", error_type, " code:", code, " rationale:'", rationale, "' backtraces:", script_backtraces)
-		# 根据 error_type 判断消息级别
-		var msg = ""
-		var print_func = ""
+	func _log_error(function: String, file: String, line: int, code: Variant, rationale: String, editor_notify: bool, error_type: int, script_backtraces: Array) -> void:
+		var desc = ""
+		var print_func = "print_info"
+
+		# 1. rationale 是官方给的描述，很多情况下是空的
+		desc = rationale
+
+		# 2. code 实际上是错误描述字符串（引擎版本差异）
+		if desc.is_empty() and code != null:
+			desc = str(code)   # 直接转成字符串
+
+		# 3. 还是空的话，从调用栈里取最顶层的函数名
+		if desc.is_empty() and not script_backtraces.is_empty():
+			desc = str(script_backtraces[0])  # 取最近的一条
+
+		# 4. 彻底没救了
+		if desc.is_empty():
+			return  # 忽略无意义的消息
+
+		# 5. 根据错误类型决定前缀和输出方法
 		match error_type:
-			Logger.ERROR_TYPE_SCRIPT: # 脚本错误 (2)
-				msg = "运行时错误: %s\n  位置: %s:%d" % [rationale, file.get_file(), line]
+			Logger.ERROR_TYPE_SCRIPT:
+				desc = "脚本错误: " + desc + "\n  位置: " + file.get_file() + ":" + str(line)
 				print_func = "print_error"
-			Logger.ERROR_TYPE_ERROR: # 普通运行时错误 (0)
-				msg = "运行时错误: %s\n  位置: %s:%d" % [rationale, file.get_file(), line]
+			Logger.ERROR_TYPE_ERROR:
+				desc = "运行时错误: " + desc + "\n  位置: " + file.get_file() + ":" + str(line)
 				print_func = "print_error"
-			Logger.ERROR_TYPE_WARNING: # 警告 (1)
-				msg = "警告: %s\n  位置: %s:%d" % [rationale, file.get_file(), line]
+			Logger.ERROR_TYPE_WARNING:
+				desc = "警告: " + desc + "\n  位置: " + file.get_file() + ":" + str(line)
 				print_func = "print_warn"
-			_: # 其他类型，暂不处理
+			_:
 				return
 
-		# 调用 Console 单例的方法，将错误信息输出到你的控制台窗口
-		# 注意线程安全，稍后解释
-		Console.call_deferred("_update_console", msg, print_func)
+		# 线程安全地输出到控制台
+		Console.call_deferred("_update_console", desc, print_func)
 
-
-	# 重写 _log_message 方法来处理一般的打印信息
 	func _log_message(message: String, error: bool) -> void:
-		# 如果是错误信息（发往 stderr），我们也输出到控制台
 		if error:
-			Console.call_deferred("_update_console", "系统错误: %s" % message, "print_error")
+			Console.call_deferred("_update_console", "[color=gray]系统: " + message + "[/color]", "print_error")
 
 var _logger: ConsoleLogger = null
 
