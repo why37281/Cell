@@ -16,21 +16,22 @@ var log_entries: Array[Dictionary] = []
 var total_chars: int = 0  # 可保留用于其他限制，非必须
 
 func _check_auto_export() -> void:
-	if log_entries.size() >= AUTO_EXPORT_LINES_THRESHOLD:
+	# 当内存日志行数比上次导出时多出 AUTO_EXPORT_CHUNK 行，就触发自动导出
+	if log_entries.size() - (_last_exported_index + 1) >= AUTO_EXPORT_CHUNK:
 		_auto_export()
 
 func _auto_export() -> void:
-	# 取前 AUTO_EXPORT_CHUNK 条日志
-	var to_export = log_entries.slice(0, AUTO_EXPORT_CHUNK)
-	# 写入文件（追加模式）
-	_append_to_file_readable(to_export)
-	# 从内存中移除已导出的条目
-	#log_entries = log_entries.slice(AUTO_EXPORT_CHUNK, log_entries.size())
-	# 重建显示，只保留剩余的500行
-	#_rebuild_display()
-	# 在编辑器控制台打一条记录，避免循环
-	print("[Console] 已自动导出 %d 行日志" % AUTO_EXPORT_CHUNK)
+	# 导出从上一次导出之后到现在的所有新日志
+	var start_index = _last_exported_index + 1
+	var to_export = log_entries.slice(start_index, log_entries.size())
+	
+	if to_export.is_empty():
+		return
 
+	_append_to_file_readable(to_export)
+	_last_exported_index = log_entries.size() - 1  # 更新指针
+	print("[Console] 已自动导出 %d 行日志（索引 %d - %d）" % [to_export.size(), start_index, _last_exported_index])
+	
 # 将日志导出到指定文件（追加模式）
 func export_logs_to_file(file_name: String) -> void:
 	if log_entries.is_empty():
@@ -55,6 +56,40 @@ func export_logs_to_file(file_name: String) -> void:
 
 	file.close()
 	print_info("日志已导出到 " + file_name)
+
+func load_logs_from_file(file_name: String, clear_existing: bool = false) -> void:
+	var dir = Path.exe_dir
+	var file_path = dir.path_join(file_name)
+
+	if not FileAccess.file_exists(file_path):
+		print_error("日志文件不存在: " + file_name)
+		return
+
+	var file = FileAccess.open(file_path, FileAccess.READ)
+	if file == null:
+		print_error("无法打开日志文件: " + file_name)
+		return
+
+	var entries: Array[Dictionary] = []
+	while not file.eof_reached():
+		var line = file.get_line()
+		if line.is_empty():
+			continue
+		var json = JSON.new()
+		var err = json.parse(line)
+		if err == OK:
+			var data = json.get_data()
+			if data is Dictionary and data.has("type") and data.has("text"):
+				entries.append(data)
+	file.close()
+
+	if clear_existing:
+		log_entries = entries
+	else:
+		log_entries.append_array(entries)
+
+	_rebuild_display()
+	print_info("已从 %s 加载 %d 条日志" % [file_name, entries.size()])
 
 func _append_to_file_readable(entries: Array) -> void:
 	var dir = Path.exe_dir
