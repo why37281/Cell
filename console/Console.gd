@@ -57,7 +57,7 @@ func export_logs_to_file(file_name: String) -> void:
 	file.close()
 	print_info("日志已导出到 " + file_name)
 
-func load_logs_from_file(file_name: String, clear_existing: bool = false) -> void:
+func load_logs_from_file(file_name: String, clear_existing: bool = true) -> void:
 	var dir = Path.exe_dir
 	var file_path = dir.path_join(file_name)
 
@@ -85,11 +85,19 @@ func load_logs_from_file(file_name: String, clear_existing: bool = false) -> voi
 
 	if clear_existing:
 		log_entries = entries
+		_last_exported_index = -1   # 重置指针
 	else:
 		log_entries.append_array(entries)
-
+		# 如果追加，指针位置不变，后续自动导出会导出所有新行
 	_rebuild_display()
 	print_info("已从 %s 加载 %d 条日志" % [file_name, entries.size()])
+
+func clear_logs() -> void:
+	log_entries.clear()
+	_last_exported_index = -1
+	if is_instance_valid(console_window) and is_instance_valid(console_window.rich_text):
+		console_window.rich_text.clear()
+	print_info("日志已清空")
 
 func _append_to_file_readable(entries: Array) -> void:
 	var dir = Path.exe_dir
