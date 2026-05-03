@@ -3,6 +3,8 @@ extends Node
 var vars: Dictionary = {}          # 所有持久化变量存在这里
 var execute_node: Node = null      # 一直存活的执行节点
 var console_window : Window
+# 新增：记录已经自动导出到文件的最后一条内存索引（-1 表示未导出过）
+var _last_exported_index: int = -1
 
 # 日志自动导出相关常量
 const AUTO_EXPORT_LINES_THRESHOLD = 1000
@@ -23,7 +25,7 @@ func _auto_export() -> void:
 	# 写入文件（追加模式）
 	_append_to_file_readable(to_export)
 	# 从内存中移除已导出的条目
-	log_entries = log_entries.slice(AUTO_EXPORT_CHUNK, log_entries.size())
+	#log_entries = log_entries.slice(AUTO_EXPORT_CHUNK, log_entries.size())
 	# 重建显示，只保留剩余的500行
 	#_rebuild_display()
 	# 在编辑器控制台打一条记录，避免循环
@@ -37,27 +39,19 @@ func export_logs_to_file(file_name: String) -> void:
 
 	var dir = Path.exe_dir
 	var file_path = dir.path_join(file_name)
-
-	# 确保目录存在
 	DirAccess.make_dir_recursive_absolute(dir)
 
 	var file = FileAccess.open(file_path, FileAccess.READ_WRITE)
 	if file == null:
-		# 文件不存在则创建
 		file = FileAccess.open(file_path, FileAccess.WRITE)
 		if file == null:
 			push_error("无法创建日志文件: " + file_path)
 			return
-
-	file.seek_end()  # 移动到文件末尾，准备追加
+	file.seek_end()
 
 	for entry in log_entries:
-		var line: String
-		match entry["type"]:
-			"error": line = "● ERROR: " + entry["text"]
-			"warn":   line = "● WARN: " + entry["text"]
-			_:        line = entry["text"]
-		file.store_string(line + "\n")
+		# 将字典序列化为 JSON 字符串，写入一行
+		file.store_string(JSON.stringify(entry) + "\n")
 
 	file.close()
 	print_info("日志已导出到 " + file_name)

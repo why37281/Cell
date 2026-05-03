@@ -86,7 +86,16 @@ text = "运行"
 custom_minimum_size = Vector2(0, 40)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "导出"
+text = "导出为文本文件"
+
+[node name="Export_Loadable" type="Button" parent="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=1545000808]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "导出为可加载文件"
+
+[node name="Load" type="Button" parent="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer" unique_id=941354219]
+layout_mode = 2
+size_flags_horizontal = 3
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="focus_entered" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_entered"]
