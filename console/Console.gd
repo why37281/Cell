@@ -10,10 +10,13 @@ var _last_exported_index: int = -1
 const AUTO_EXPORT_LINES_THRESHOLD = 1000
 const AUTO_EXPORT_CHUNK = 500
 const LOG_FILE_NAME = "console_log.txt"
+const LOADABLE_FILE_NAME = "console_log.loadable"
 
 # 修改日志存储为字典数组：{ "type": "error"/"warn"/"info", "text": "消息内容" }
 var log_entries: Array[Dictionary] = []
 var total_chars: int = 0  # 可保留用于其他限制，非必须
+
+#region 导出函数
 
 func _check_auto_export() -> void:
 	# 当内存日志行数比上次导出时多出 AUTO_EXPORT_CHUNK 行，就触发自动导出
@@ -30,10 +33,36 @@ func _auto_export() -> void:
 
 	_append_to_file_readable(to_export)
 	_last_exported_index = log_entries.size() - 1  # 更新指针
-	print("[Console] 已自动导出 %d 行日志（索引 %d - %d）" % [to_export.size(), start_index, _last_exported_index])
-	
+	print_info("[Console] 已自动导出 %d 行日志（索引 %d - %d）" % [to_export.size(), start_index, _last_exported_index])
+
+func _append_to_file_readable(entries: Array) -> void:
+	var dir = Path.exe_dir
+	var file_path = dir.path_join(LOG_FILE_NAME)
+
+	# 确保目录存在
+	DirAccess.make_dir_recursive_absolute(dir)
+
+	var file = FileAccess.open(file_path, FileAccess.READ_WRITE)
+	if file == null:
+		file = FileAccess.open(file_path, FileAccess.WRITE)
+		if file == null:
+			push_error("无法创建日志文件: " + file_path)
+			return
+	file.seek_end()
+
+	for entry in entries:
+		var line: String
+		match entry["type"]:
+			"error": line = "● ERROR: " + entry["text"]
+			"warn":   line = "● WARN: " + entry["text"]
+			_:        line = entry["text"]
+		file.store_string(line + "\n")
+
+	file.close()
+
 # 将日志导出到指定文件（追加模式）
-func export_logs_to_file(file_name: String) -> void:
+func export_logs_to_file() -> void:
+	var file_name = LOADABLE_FILE_NAME
 	if log_entries.is_empty():
 		print_info("没有可导出的日志。")
 		return
@@ -55,7 +84,9 @@ func export_logs_to_file(file_name: String) -> void:
 		file.store_string(JSON.stringify(entry) + "\n")
 
 	file.close()
-	print_info("日志已导出到 " + file_name)
+	print_info("日志已导出到 " + file_path)
+
+#endregion
 
 func load_logs_from_file(file_name: String, clear_existing: bool = true) -> void:
 	var dir = Path.exe_dir
@@ -98,31 +129,6 @@ func clear_logs() -> void:
 	if is_instance_valid(console_window) and is_instance_valid(console_window.rich_text):
 		console_window.rich_text.clear()
 	print_info("日志已清空")
-
-func _append_to_file_readable(entries: Array) -> void:
-	var dir = Path.exe_dir
-	var file_path = dir.path_join(LOG_FILE_NAME)
-
-	# 确保目录存在
-	DirAccess.make_dir_recursive_absolute(dir)
-
-	var file = FileAccess.open(file_path, FileAccess.READ_WRITE)
-	if file == null:
-		file = FileAccess.open(file_path, FileAccess.WRITE)
-		if file == null:
-			push_error("无法创建日志文件: " + file_path)
-			return
-	file.seek_end()
-
-	for entry in entries:
-		var line: String
-		match entry["type"]:
-			"error": line = "● ERROR: " + entry["text"]
-			"warn":   line = "● WARN: " + entry["text"]
-			_:        line = entry["text"]
-		file.store_string(line + "\n")
-
-	file.close()
 
 func _rebuild_display() -> void:
 	var rtl = console_window.rich_text

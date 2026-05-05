@@ -49,4 +49,16 @@ func _on_run_pressed() -> void:
 	Console.execute_full(code)
 
 func _on_export_pressed() -> void:
+	Console._auto_export()
+
+
+func _on_export_loadable_pressed() -> void:
+	Console.export_logs_to_file()
+
+
+func _on_load_pressed() -> void:
+	pass # Replace with function body.
+
+
+func _on_clean_pressed() -> void:
 	pass # Replace with function body.
