@@ -88,17 +88,15 @@ func export_logs_to_file() -> void:
 
 #endregion
 
-func load_logs_from_file(file_name: String, clear_existing: bool = true) -> void:
-	var dir = Path.exe_dir
-	var file_path = dir.path_join(file_name)
+func load_logs_from_file(file_path: String, clear_existing: bool = true) -> void:
 
 	if not FileAccess.file_exists(file_path):
-		print_error("日志文件不存在: " + file_name)
+		print_error("日志文件不存在: " + file_path)
 		return
 
 	var file = FileAccess.open(file_path, FileAccess.READ)
 	if file == null:
-		print_error("无法打开日志文件: " + file_name)
+		print_error("无法打开日志文件: " + file_path)
 		return
 
 	var entries: Array[Dictionary] = []
@@ -121,7 +119,7 @@ func load_logs_from_file(file_name: String, clear_existing: bool = true) -> void
 		log_entries.append_array(entries)
 		# 如果追加，指针位置不变，后续自动导出会导出所有新行
 	_rebuild_display()
-	print_info("已从 %s 加载 %d 条日志" % [file_name, entries.size()])
+	print_info("已从 %s 加载 %d 条日志" % [file_path, entries.size()])
 
 func clear_logs() -> void:
 	log_entries.clear()

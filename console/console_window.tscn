@@ -103,6 +103,22 @@ layout_mode = 2
 size_flags_horizontal = 3
 text = "清除"
 
+[node name="FileDialog" type="FileDialog" parent="." unique_id=117729110]
+oversampling_override = 1.0
+title = "打开文件"
+position = Vector2i(0, 36)
+visible = true
+minimize_disabled = false
+maximize_disabled = false
+ok_button_text = "打开"
+cancel_button_text = "取消"
+mode_overrides_title = false
+file_mode = 0
+access = 2
+filters = PackedStringArray("*.loadable")
+show_hidden_files = true
+use_native_dialog = true
+
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="focus_entered" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_entered"]
 [connection signal="focus_exited" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_exited"]
@@ -111,3 +127,4 @@ text = "清除"
 [connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Export_Loadable" to="." method="_on_export_loadable_pressed"]
 [connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Clean" to="." method="_on_clean_pressed"]
+[connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]

@@ -57,8 +57,12 @@ func _on_export_loadable_pressed() -> void:
 
 
 func _on_load_pressed() -> void:
-	pass # Replace with function body.
-
+	$FileDialog.visible = true
+	#TODO turn into popup()
 
 func _on_clean_pressed() -> void:
 	pass # Replace with function body.
+
+
+func _on_file_dialog_file_selected(path: String) -> void:
+	Console.load_logs_from_file(path)
