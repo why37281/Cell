@@ -285,5 +285,8 @@ func _input(event):
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F12:
 		# 切换窗口可见性
 		console_window.get_node("WarnWindow").visible = true
+		# 试过用popup，但是不管用
+		# I have tried popup() but it didn't work
+		
 		# 接受事件，阻止继续传播（可选）
 		get_viewport().set_input_as_handled()
