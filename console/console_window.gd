@@ -82,4 +82,4 @@ func _on_cancel_pressed() -> void:
 
 func _on_window_close_requested() -> void:
 	$WarnWindow.hide()
-	$".".popup_centered()
+	popup_centered()
