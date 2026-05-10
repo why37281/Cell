@@ -175,6 +175,8 @@ text = "取消"
 oversampling_override = 1.0
 position = Vector2i(76, 95)
 visible = false
+minimize_disabled = true
+maximize_disabled = true
 
 [node name="Label" type="Label" parent="WarnWindow" unique_id=1028967109]
 anchors_preset = 15
