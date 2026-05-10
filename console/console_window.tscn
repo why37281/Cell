@@ -7,6 +7,7 @@ oversampling_override = 1.0
 title = "Console"
 initial_position = 1
 size = Vector2i(800, 500)
+visible = false
 script = ExtResource("1_uqdcy")
 
 [node name="VSplitContainer" type="VSplitContainer" parent="." unique_id=1823987566]
@@ -107,7 +108,6 @@ text = "清除"
 oversampling_override = 1.0
 title = "打开文件"
 position = Vector2i(0, 36)
-visible = true
 minimize_disabled = false
 maximize_disabled = false
 ok_button_text = "打开"
@@ -119,6 +119,71 @@ filters = PackedStringArray("*.loadable")
 show_hidden_files = true
 use_native_dialog = true
 
+[node name="ConfirmWindow" type="Window" parent="." unique_id=1883370594]
+oversampling_override = 1.0
+title = "清除？"
+size = Vector2i(300, 200)
+visible = false
+minimize_disabled = true
+maximize_disabled = true
+
+[node name="MarginContainer" type="MarginContainer" parent="ConfirmWindow" unique_id=571767474]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 15
+theme_override_constants/margin_top = 15
+theme_override_constants/margin_right = 15
+theme_override_constants/margin_bottom = 15
+
+[node name="VBoxContainer" type="VBoxContainer" parent="ConfirmWindow/MarginContainer" unique_id=1725698315]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ConfirmWindow/MarginContainer/VBoxContainer" unique_id=2063770223]
+layout_mode = 2
+size_flags_vertical = 2
+theme_override_font_sizes/font_size = 20
+text = "此前所有未保存的日志将被清除
+确认清除？"
+
+[node name="MarginContainer" type="MarginContainer" parent="ConfirmWindow/MarginContainer/VBoxContainer" unique_id=1807659696]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ConfirmWindow/MarginContainer/VBoxContainer/MarginContainer" unique_id=1314572643]
+layout_mode = 2
+size_flags_vertical = 0
+
+[node name="Confirm" type="Button" parent="ConfirmWindow/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1851868559]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+size_flags_horizontal = 3
+text = "确定"
+
+[node name="Control" type="Control" parent="ConfirmWindow/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1193348547]
+custom_minimum_size = Vector2(7, 0)
+layout_mode = 2
+
+[node name="Cancel" type="Button" parent="ConfirmWindow/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer" unique_id=1238797081]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "取消"
+
+[node name="WarnWindow" type="Window" parent="." unique_id=76447029]
+oversampling_override = 1.0
+position = Vector2i(76, 95)
+visible = false
+
+[node name="Label" type="Label" parent="WarnWindow" unique_id=1028967109]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "请输入文本"
+
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="focus_entered" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_entered"]
 [connection signal="focus_exited" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_exited"]
@@ -128,3 +193,5 @@ use_native_dialog = true
 [connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Load" to="." method="_on_load_pressed"]
 [connection signal="pressed" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/HBoxContainer/Clean" to="." method="_on_clean_pressed"]
 [connection signal="file_selected" from="FileDialog" to="." method="_on_file_dialog_file_selected"]
+[connection signal="pressed" from="ConfirmWindow/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/Confirm" to="." method="_on_confirm_pressed"]
+[connection signal="pressed" from="ConfirmWindow/MarginContainer/VBoxContainer/MarginContainer/HBoxContainer/Cancel" to="." method="_on_cancel_pressed"]

@@ -58,11 +58,28 @@ func _on_export_loadable_pressed() -> void:
 
 func _on_load_pressed() -> void:
 	$FileDialog.visible = true
-	#TODO turn into popup()
 
 func _on_clean_pressed() -> void:
-	pass # Replace with function body.
+	$ConfirmWindow.popup_centered()
 
 
 func _on_file_dialog_file_selected(path: String) -> void:
 	Console.load_logs_from_file(path)
+
+func _on_confirmation_dialog_confirmed() -> void:
+	print("confirm")
+
+
+func _on_confirm_pressed() -> void:
+	$ConfirmWindow.hide()
+	Console.log_entries = []
+	Console._rebuild_display()
+
+
+func _on_cancel_pressed() -> void:
+	$ConfirmWindow.hide()
+
+
+func _on_window_close_requested() -> void:
+	$WarnWindow.hide()
+	$".".popup_centered()

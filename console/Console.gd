@@ -88,6 +88,7 @@ func export_logs_to_file() -> void:
 
 #endregion
 
+# 加载函数
 func load_logs_from_file(file_path: String, clear_existing: bool = true) -> void:
 
 	if not FileAccess.file_exists(file_path):
@@ -121,6 +122,7 @@ func load_logs_from_file(file_path: String, clear_existing: bool = true) -> void
 	_rebuild_display()
 	print_info("已从 %s 加载 %d 条日志" % [file_path, entries.size()])
 
+#region 日志管理函数
 func clear_logs() -> void:
 	log_entries.clear()
 	_last_exported_index = -1
@@ -144,7 +146,9 @@ func _rebuild_display() -> void:
 func _add_log_line(type: String, text: String) -> void:
 	log_entries.append({"type": type, "text": text})
 	_check_auto_export()
+#endregion
 
+#region Logger
 class ConsoleLogger extends Logger:
 	func _log_error(function: String, file: String, line: int, code: Variant, rationale: String, editor_notify: bool, error_type: int, script_backtraces: Array) -> void:
 		var desc = ""
@@ -188,6 +192,7 @@ class ConsoleLogger extends Logger:
 
 var _logger: ConsoleLogger = null
 
+# 疑似没有使用
 func _on_script_error(error: String, file: String, line: int) -> void:
 	# 将错误信息格式化并输出到控制台
 	var msg = "运行时错误 @%s:%d - %s" % [file.get_file(), line, error]
@@ -204,6 +209,7 @@ func _update_console(msg: String, method: String = "print_info"):
 		call(method, msg)
 	else:
 		print_info(msg) # 备用
+#endregion
 
 func _ready():
 	# 创建执行节点，挂上 BaseEnv 脚本，并传入 Console 自身
@@ -218,7 +224,6 @@ func _ready():
 	_logger = ConsoleLogger.new()
 	OS.add_logger(_logger)
 	print("[Console] 自定义 Logger 已注册。")
-	
 
 # 执行用户输入的完整 GDScript 代码
 func execute_full(code: String):
@@ -226,10 +231,12 @@ func execute_full(code: String):
 	var full_code = """extends "res://console/BaseEnv.gd"
 
 func run():
-	%s
-	return
-""" % code
-
+"""
+	var code_lines = code.split("\n")
+	for i in code_lines:
+		full_code = full_code + "	" + i + "\n"
+	full_code = full_code + "	return"
+	
 	var file_path = "user://temp_script.gd"
 	var file = FileAccess.open(file_path, FileAccess.WRITE)
 	if file == null:
@@ -255,6 +262,7 @@ func run():
 	DirAccess.remove_absolute(file_path)
 	print_info("Done.")
 
+#region 输出函数
 func print_info(info: String):
 	_add_log_line("info", info)
 	# 将 info 中的 [ ] 转义为 [lb] 和 [rb]
@@ -270,14 +278,12 @@ func print_warn(warn: String):
 	_add_log_line("warn", warn)
 	var safe_warn = warn.replace("[", "[lb]").replace("]", "[rb]")
 	console_window.rich_text.append_text("[color=yellow][b]● WARN: [/b]" + safe_warn + "[/color]\n")
+#endregion
 
 func _input(event):
 	# 只处理按键按下事件
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F12:
 		# 切换窗口可见性
-		if console_window.visible:
-			console_window.hide()
-		else:
-			console_window.show()  # 或 show()
+		console_window.get_node("WarnWindow").visible = true
 		# 接受事件，阻止继续传播（可选）
 		get_viewport().set_input_as_handled()
