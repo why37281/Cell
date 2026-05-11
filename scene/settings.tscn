@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://dsettings0000000"]
+
+[ext_resource type="Script" uid="uid://dsettingsback001" path="res://script/settings.gd" id="1_pyxt3"]
+
+[node name="Settings" type="Control" unique_id=802833650]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_pyxt3")
+
+[node name="Label" type="Label" parent="." unique_id=936823173]
+layout_mode = 0
+offset_left = 436.0
+offset_top = 42.0
+offset_right = 630.0
+offset_bottom = 193.0
+theme_override_font_sizes/font_size = 110
+text = "设置"
+
+[node name="Back" type="Button" parent="." unique_id=1719531005]
+layout_mode = 0
+offset_left = 388.0
+offset_top = 351.0
+offset_right = 753.0
+offset_bottom = 404.0
+text = "返回"
+
+[connection signal="pressed" from="Back" to="." method="_on_back_pressed"]

@@ -16,5 +16,3 @@ export_credentials.cfg
 data_*/
 mono_crash.*.json
 
-# Memory documentation
-memory.md
