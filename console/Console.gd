@@ -5,6 +5,7 @@ var execute_node: Node = null      # 一直存活的执行节点
 var console_window : Window
 # 新增：记录已经自动导出到文件的最后一条内存索引（-1 表示未导出过）
 var _last_exported_index: int = -1
+var warn_poped = false
 
 # 日志自动导出相关常量
 const AUTO_EXPORT_LINES_THRESHOLD = 1000
@@ -31,11 +32,12 @@ func _auto_export() -> void:
 	if to_export.is_empty():
 		return
 
-	_append_to_file_readable(to_export)
-	_last_exported_index = log_entries.size() - 1  # 更新指针
-	print_info("[Console] 已自动导出 %d 行日志（索引 %d - %d）" % [to_export.size(), start_index, _last_exported_index])
+	var dir = _append_to_file_readable(to_export)
+	if dir != "":
+		_last_exported_index = log_entries.size() - 1  # 更新指针
+		print_info("[Console] 已自动导出 %d 行日志（索引 %d - %d） 到 %s" % [to_export.size(), start_index, _last_exported_index, dir])
 
-func _append_to_file_readable(entries: Array) -> void:
+func _append_to_file_readable(entries: Array):
 	var dir = Path.exe_dir
 	var file_path = dir.path_join(LOG_FILE_NAME)
 
@@ -46,8 +48,8 @@ func _append_to_file_readable(entries: Array) -> void:
 	if file == null:
 		file = FileAccess.open(file_path, FileAccess.WRITE)
 		if file == null:
-			push_error("无法创建日志文件: " + file_path)
-			return
+			print_error("无法创建日志文件: " + file_path)
+			return ""
 	file.seek_end()
 
 	for entry in entries:
@@ -59,6 +61,7 @@ func _append_to_file_readable(entries: Array) -> void:
 		file.store_string(line + "\n")
 
 	file.close()
+	return file_path
 
 # 将日志导出到指定文件（追加模式）
 func export_logs_to_file() -> void:
@@ -218,7 +221,6 @@ func _ready():
 	add_child(execute_node)    # 挂在单例下，保证存活
 	
 	console_window = preload("res://console/console_window.tscn").instantiate()
-	console_window.hide()              # 初始隐藏
 	add_child(console_window)          # 挂在单例下
 	
 	_logger = ConsoleLogger.new()
@@ -265,28 +267,24 @@ func run():
 #region 输出函数
 func print_info(info: String):
 	_add_log_line("info", info)
-	# 将 info 中的 [ ] 转义为 [lb] 和 [rb]
-	var safe_info = info.replace("[", "[lb]").replace("]", "[rb]")
-	console_window.rich_text.append_text(safe_info + "\n")
+	console_window.rich_text.append_text(info + "\n")
 
 func print_error(error: String):
 	_add_log_line("error", error)
-	var safe_error = error.replace("[", "[lb]").replace("]", "[rb]")
-	console_window.rich_text.append_text("[color=red][b]● ERROR: [/b]" + safe_error + "[/color]\n")
+	console_window.rich_text.append_text("[color=red][b]● ERROR: [/b]" + error + "[/color]\n")
 
 func print_warn(warn: String):
 	_add_log_line("warn", warn)
-	var safe_warn = warn.replace("[", "[lb]").replace("]", "[rb]")
-	console_window.rich_text.append_text("[color=yellow][b]● WARN: [/b]" + safe_warn + "[/color]\n")
+	console_window.rich_text.append_text("[color=yellow][b]● WARN: [/b]" + warn + "[/color]\n")
 #endregion
 
 func _input(event):
 	# 只处理按键按下事件
 	if event is InputEventKey and event.pressed and event.keycode == KEY_F12:
 		# 切换窗口可见性
-		console_window.get_node("WarnWindow").popup_centered()
-		# 试过用popup，但是不管用
-		# I have tried popup() but it didn't work
-		
+		console_window.popup_centered()
+		if not warn_poped:
+			console_window.get_node("WarnWindow").popup_centered()
+			warn_poped = true
 		# 接受事件，阻止继续传播（可选）
 		get_viewport().set_input_as_handled()

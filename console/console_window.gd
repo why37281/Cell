@@ -27,6 +27,7 @@ func _on_text_edit_focus_exited() -> void:
 
 
 func _on_close_requested() -> void:
+	$WarnWindow.hide()
 	hide()
 
 func append_output(text: String):
@@ -82,4 +83,3 @@ func _on_cancel_pressed() -> void:
 
 func _on_window_close_requested() -> void:
 	$WarnWindow.hide()
-	popup_centered()

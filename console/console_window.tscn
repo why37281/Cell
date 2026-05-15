@@ -8,6 +8,7 @@ title = "Console"
 initial_position = 1
 size = Vector2i(800, 500)
 visible = false
+force_native = true
 script = ExtResource("1_uqdcy")
 
 [node name="VSplitContainer" type="VSplitContainer" parent="." unique_id=1823987566]
@@ -126,6 +127,7 @@ size = Vector2i(300, 200)
 visible = false
 minimize_disabled = true
 maximize_disabled = true
+force_native = true
 
 [node name="MarginContainer" type="MarginContainer" parent="ConfirmWindow" unique_id=571767474]
 anchors_preset = 15
@@ -177,13 +179,14 @@ position = Vector2i(76, 95)
 visible = false
 minimize_disabled = true
 maximize_disabled = true
+force_native = true
 
-[node name="Label" type="Label" parent="WarnWindow" unique_id=1028967109]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="MarginContainer" type="MarginContainer" parent="WarnWindow" unique_id=2128594859]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="Label" type="Label" parent="WarnWindow/MarginContainer" unique_id=1028967109]
+layout_mode = 2
 text = "请输入文本"
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
