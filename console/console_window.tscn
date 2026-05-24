@@ -1,6 +1,10 @@
 [gd_scene format=3 uid="uid://deoti8wsr7rlh"]
 
 [ext_resource type="Script" uid="uid://bey2x6ll3lp3j" path="res://console/console_window.gd" id="1_uqdcy"]
+[ext_resource type="FontFile" uid="uid://bnw36ri4lomav" path="res://fonts/CONSOLA.TTF" id="2_x53ar"]
+[ext_resource type="FontFile" uid="uid://b41nd7jhfji25" path="res://fonts/CONSOLAB.TTF" id="3_e0or6"]
+[ext_resource type="FontFile" uid="uid://bymtliqba1832" path="res://fonts/CONSOLAZ.TTF" id="4_1dxwr"]
+[ext_resource type="FontFile" uid="uid://fr4kj4sar045" path="res://fonts/CONSOLAI.TTF" id="5_vcuka"]
 
 [node name="ConsoleWindow" type="Window" unique_id=887806304]
 oversampling_override = 1.0
@@ -42,6 +46,10 @@ theme_override_constants/margin_bottom = 10
 [node name="RichTextLabel" type="RichTextLabel" parent="VSplitContainer/VBoxContainer/ScrollContainer/MarginContainer" unique_id=1575991822]
 layout_mode = 2
 focus_mode = 2
+theme_override_fonts/normal_font = ExtResource("2_x53ar")
+theme_override_fonts/bold_font = ExtResource("3_e0or6")
+theme_override_fonts/bold_italics_font = ExtResource("4_1dxwr")
+theme_override_fonts/italics_font = ExtResource("5_vcuka")
 theme_override_font_sizes/normal_font_size = 20
 theme_override_font_sizes/bold_font_size = 20
 theme_override_font_sizes/bold_italics_font_size = 20
@@ -176,18 +184,29 @@ text = "取消"
 [node name="WarnWindow" type="Window" parent="." unique_id=76447029]
 oversampling_override = 1.0
 position = Vector2i(76, 95)
+size = Vector2i(300, 150)
 visible = false
 minimize_disabled = true
 maximize_disabled = true
 force_native = true
 
 [node name="MarginContainer" type="MarginContainer" parent="WarnWindow" unique_id=2128594859]
-offset_right = 40.0
-offset_bottom = 40.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
 
 [node name="Label" type="Label" parent="WarnWindow/MarginContainer" unique_id=1028967109]
 layout_mode = 2
-text = "请输入文本"
+text = "注意：
+本控制台可能会由于输入指令影响而产生未定义的行为，请谨慎使用
+本人不对由于使用本控制台而造成的后果负任何责任"
+autowrap_mode = 3
 
 [connection signal="close_requested" from="." to="." method="_on_close_requested"]
 [connection signal="focus_entered" from="VSplitContainer/MarginContainer/PanelContainer/VBoxContainer/TextEdit" to="." method="_on_text_edit_focus_entered"]

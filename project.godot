@@ -19,6 +19,8 @@ config/icon="res://icon.svg"
 
 Console="*uid://c8m3xfpp1ix1l"
 Path="*uid://b8if4fierj8lp"
+SettingItems="*uid://c44bs831bij5b"
+SettingsIO="*uid://br52xymn72mvt"
 
 [display]
 
