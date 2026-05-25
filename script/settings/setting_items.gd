@@ -27,7 +27,7 @@ func set_value(id: String, value):
 		_values[id] = value
 	else:
 		push_warning("SettingItems: 未知设置项 '%s'" % id)
-		Console.print_error("SettingItems: 未知设置项 '%s'" % id)
+		Console.print_warn("SettingItems: 未知设置项 '%s'" % id)
 
 # 获取所有键
 func get_keys() -> Array:
