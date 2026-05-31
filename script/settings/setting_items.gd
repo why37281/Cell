@@ -42,22 +42,26 @@ func reset_item(id: String):
 func reset_all():
 	_values = DEFAULTS.duplicate(true)
 
-# 递归深拷贝：仅处理字典和普通数组，其他类型直接返回（视为不可变或无需拷贝）
+# 递归深拷贝：字典和各类数组递归处理，其他类型直接返回
 func _deep_copy(value: Variant) -> Variant:
-	if value is Dictionary:
-		var new_dict: Dictionary = {}
-		for key in value:
-			new_dict[key] = _deep_copy(value[key])
-		return new_dict
+	match typeof(value):
+		TYPE_DICTIONARY:
+			var new_dict: Dictionary = {}
+			for key in value:
+				new_dict[key] = _deep_copy(value[key])
+			return new_dict
 
-	if value is Array:
-		var new_arr: Array = []
-		for elem in value:
-			new_arr.append(_deep_copy(elem))
-		return new_arr
+		TYPE_ARRAY, TYPE_PACKED_STRING_ARRAY, TYPE_PACKED_INT32_ARRAY, \
+		TYPE_PACKED_INT64_ARRAY, TYPE_PACKED_FLOAT32_ARRAY, TYPE_PACKED_FLOAT64_ARRAY, \
+		TYPE_PACKED_VECTOR2_ARRAY, TYPE_PACKED_VECTOR3_ARRAY, TYPE_PACKED_VECTOR4_ARRAY, \
+		TYPE_PACKED_COLOR_ARRAY, TYPE_PACKED_BYTE_ARRAY:
+			var new_array: Array = []
+			for element in value:
+				new_array.append(_deep_copy(element))
+			return new_array
 
-	# 基础类型、PackedArray、Object、Resource 等全部直接返回
-	return value
+		_:
+			return value
 
 # 批量设置（从文件加载时使用）
 func set_all(data: Dictionary):
