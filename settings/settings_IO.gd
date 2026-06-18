@@ -2,6 +2,8 @@
 extends Node
 
 const FILE_NAME = "settings.json"
+const CURRENT_VERSION: String = "0.0.1"
+const VERSION_KEY = "$version"
 
 # 保存到文件
 func save_file():
@@ -15,7 +17,9 @@ func save_file():
 		Console.print_error("SettingsIO: 无法写入 " + file_path)
 		return
 
-	var json_str = JSON.stringify(SettingItems._values, "\t")
+	var save_data: Dictionary = SettingItems._values.duplicate(true)
+	save_data[VERSION_KEY] = CURRENT_VERSION
+	var json_str = JSON.stringify(save_data, "\t")
 	file.store_string(json_str)
 	file.close()
 
@@ -42,4 +46,11 @@ func load_file():
 
 	var data = json.get_data()
 	if typeof(data) == TYPE_DICTIONARY:
+		var version: String = data.get(VERSION_KEY, "VersionInvalid")
+		data.erase(VERSION_KEY)
+		_migrate_data(data, version)
 		SettingItems.set_all(data)
+
+# 数据迁移：处理旧版本存储格式变更
+func _migrate_data(data: Dictionary, version: String):
+	pass

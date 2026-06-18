@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://dqqwy31rm76pk"]
+
+[ext_resource type="PackedScene" uid="uid://d2lmy7pkbramy" path="res://settings/controls/scene/checkbox_setting.tscn" id="1_5ac2v"]
+[ext_resource type="PackedScene" uid="uid://d23v16a2c03yt" path="res://settings/controls/scene/option_button_setting.tscn" id="2_l3ro1"]
+
+[node name="GameSettings" type="VBoxContainer" unique_id=33963590]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+
+[node name="DisplayOptions" parent="." unique_id=1898801639 instance=ExtResource("1_5ac2v")]
+layout_mode = 2
+options = ["1", "2", "3"]
+labels = ["a", "b", "c"]
+setting_key = "fullscreen"
+description = "启用后游戏将以全屏模式运行"
+
+[node name="Sep1" type="HSeparator" parent="." unique_id=903436054]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="LanguageSelect" parent="." unique_id=2028618159 instance=ExtResource("2_l3ro1")]
+layout_mode = 2
+setting_key = "language"
+description = "界面显示语言，重启后生效"

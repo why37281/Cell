@@ -1,0 +1,30 @@
+[gd_scene format=3 uid="uid://d2lmy7pkbramy"]
+
+[ext_resource type="Script" uid="uid://bdhfjd6evecic" path="res://settings/controls/script/checkbox_setting.gd" id="1_jnf40"]
+
+[node name="VBoxContainer" type="VBoxContainer" unique_id=1987597899]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 45.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 4
+script = ExtResource("1_jnf40")
+
+[node name="TitleLabel" type="Label" parent="." unique_id=784665199]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "setting_title"
+
+[node name="DescLabel" type="Label" parent="." unique_id=2113389018]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "setting_description"
+
+[node name="CheckboxContainer" type="VBoxContainer" parent="." unique_id=1653280597]
+layout_mode = 2
+theme_override_constants/separation = 4

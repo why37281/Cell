@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bq0icdhbqxt3x"]
+
+[ext_resource type="PackedScene" uid="uid://d23v16a2c03yt" path="res://settings/controls/scene/option_button_setting.tscn" id="1_yvnp5"]
+
+[node name="VideoSettings" type="VBoxContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 20
+
+[node name="ResolutionSelect" parent="." instance=ExtResource("1_yvnp5")]
+layout_mode = 2
+setting_key = "resolution"
+options = PackedStringArray("1280x720", "1920x1080", "2560x1440")
+description = "游戏渲染分辨率，高分辨率需要更强的显卡性能"

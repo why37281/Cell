@@ -1,0 +1,32 @@
+[gd_scene format=3 uid="uid://d23v16a2c03yt"]
+
+[ext_resource type="Script" uid="uid://cmekc0a8q7doc" path="res://settings/controls/script/option_button_setting.gd" id="1_h3g8f"]
+
+[node name="VBoxContainer2" type="VBoxContainer" unique_id=1237999206]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 45.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 4
+script = ExtResource("1_h3g8f")
+
+[node name="TitleLabel" type="Label" parent="." unique_id=1931158661]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "setting_title"
+
+[node name="DescLabel" type="Label" parent="." unique_id=591572360]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "setting_description"
+autowrap_mode = 3
+
+[node name="OptionButton" type="OptionButton" parent="." unique_id=126402964]
+custom_minimum_size = Vector2(180, 0)
+layout_mode = 2
+size_flags_horizontal = 0

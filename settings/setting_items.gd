@@ -4,7 +4,7 @@ extends Node
 # 默认值字典：所有设置项的初始值
 const DEFAULTS: Dictionary = {
 	"master_volume": 1.0,
-	"fullscreen": false,
+	"fullscreen": [],
 	"resolution": "1920x1080",
 	"language": "zh_CN",
 	"music_volume": 0.8,
@@ -40,7 +40,7 @@ func reset_item(id: String):
 
 # 重置所有
 func reset_all():
-	_values = DEFAULTS.duplicate(true)
+	_values = _deep_copy(DEFAULTS)
 
 # 递归深拷贝：字典和各类数组递归处理，其他类型直接返回
 func _deep_copy(value: Variant) -> Variant:

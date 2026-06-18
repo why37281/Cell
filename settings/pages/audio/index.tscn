@@ -1,0 +1,37 @@
+[gd_scene format=3 uid="uid://o7nljl07sm0m"]
+
+[ext_resource type="PackedScene" uid="uid://60pgyy0wxd0j" path="res://settings/controls/scene/slider_setting.tscn" id="1_kcgnj"]
+
+[node name="AudioSettings" type="VBoxContainer" unique_id=652406502]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 10
+
+[node name="MasterVolume" parent="." unique_id=1228813953 instance=ExtResource("1_kcgnj")]
+layout_mode = 2
+step = 0.01
+setting_key = "master_volume"
+description = "控制所有声音的总音量"
+
+[node name="Sep1" type="HSeparator" parent="." unique_id=747267305]
+layout_mode = 2
+
+[node name="MusicVolume" parent="." unique_id=86977514 instance=ExtResource("1_kcgnj")]
+layout_mode = 2
+step = 0.01
+setting_key = "music_volume"
+description = "背景音乐的音量大小"
+
+[node name="Sep2" type="HSeparator" parent="." unique_id=1839840234]
+layout_mode = 2
+
+[node name="SfxVolume" parent="." unique_id=1172947789 instance=ExtResource("1_kcgnj")]
+layout_mode = 2
+step = 0.01
+setting_key = "sfx_volume"
+description = "音效的音量大小"

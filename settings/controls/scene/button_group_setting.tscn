@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://cslrpnqqv0mfx"]
+
+[ext_resource type="Script" uid="uid://q3vyaaw40k7m" path="res://settings/controls/script/button_group_setting.gd" id="1_3ua7w"]
+
+[node name="VBoxContainer" type="VBoxContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 45.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 0
+theme_override_constants/separation = 4
+script = ExtResource("1_3ua7w")
+
+[node name="TitleLabel" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "setting_title"
+
+[node name="DescLabel" type="Label" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/font_color = Color(0.6, 0.6, 0.6, 1)
+theme_override_font_sizes/font_size = 12
+text = "setting_description"
+autowrap_mode = 3
+
+[node name="RadioContainer" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 4
