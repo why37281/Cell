@@ -1,17 +1,9 @@
 [gd_scene format=3 uid="uid://bxvduf8h0611e"]
 
-[ext_resource type="Texture2D" uid="uid://dpfrvvp0v0wen" path="res://resource/picture/tile/board.png" id="1_5kiuu"]
 [ext_resource type="Script" uid="uid://bvk6tcbv3ydqq" path="res://script/game.gd" id="1_dbls1"]
 [ext_resource type="Script" uid="uid://cy7utfm5wq5gu" path="res://script/camera.gd" id="2_33cqm"]
-
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_5kiuu"]
-texture = ExtResource("1_5kiuu")
-texture_region_size = Vector2i(64, 64)
-0:0/0 = 0
-
-[sub_resource type="TileSet" id="TileSet_n4st5"]
-tile_size = Vector2i(64, 64)
-sources/1 = SubResource("TileSetAtlasSource_5kiuu")
+[ext_resource type="TileSet" uid="uid://dtypmnkj2dcav" path="res://tile_set/bottom.tres" id="3_33cqm"]
+[ext_resource type="TileSet" uid="uid://b5avpsbrxxyn1" path="res://tile_set/node.tres" id="4_xwcet"]
 
 [node name="Game" type="Node2D" unique_id=1829907624]
 script = ExtResource("1_dbls1")
@@ -21,5 +13,8 @@ script = ExtResource("1_dbls1")
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1984213129]
 script = ExtResource("2_33cqm")
 
-[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=505524648]
-tile_set = SubResource("TileSet_n4st5")
+[node name="BottomTileLayer" type="TileMapLayer" parent="." unique_id=505524648]
+tile_set = ExtResource("3_33cqm")
+
+[node name="NodeTileLayer" type="TileMapLayer" parent="." unique_id=775686085]
+tile_set = ExtResource("4_xwcet")
